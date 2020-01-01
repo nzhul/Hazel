@@ -10,6 +10,8 @@
 
 #include "Hazel/ImGui/ImGuiLayer.h"
 
+#include "Hazel/Renderer/Shader.h"
+
 namespace Hazel
 {
     class HAZEL_API Application
@@ -36,6 +38,8 @@ namespace Hazel
         LayerStack _LayerStack;
 
         unsigned int _VertexArray, _VertexBuffer, _IndexBuffer;
+        std::unique_ptr<Shader> _Shader;
+
     private:
         static Application* _Instance;
     };
