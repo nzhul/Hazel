@@ -17,11 +17,13 @@ namespace Hazel {
     {
         _Layers.emplace(_Layers.begin() + _LayerInsertIndex, layer);
         _LayerInsertIndex++;
+        layer->OnAttach();
     }
 
     void LayerStack::PushOverlay(Layer* overlay)
     {
         _Layers.emplace_back(overlay);
+        overlay->OnAttach();
     }
 
     void LayerStack::PopLayer(Layer* layer)
@@ -31,6 +33,7 @@ namespace Hazel {
         {
             _Layers.erase(it);
             _LayerInsertIndex--;
+            layer->OnDetach();
         }
     }
 
@@ -40,6 +43,7 @@ namespace Hazel {
         if (it != _Layers.end())
         {
             _Layers.erase(it);
+            overlay->OnDetach();
         }
     }
 }

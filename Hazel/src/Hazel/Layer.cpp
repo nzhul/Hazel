@@ -7,9 +7,4 @@ namespace Hazel {
         : _DebugName(debugName)
     {
     }
-
-    Layer::~Layer()
-    {
-
-    }
 }
