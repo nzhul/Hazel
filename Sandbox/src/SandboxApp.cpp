@@ -93,7 +93,7 @@ public:
             }
         )";
 
-        _Shader.reset(Hazel::Shader::Create(vertexSrc, fragmentSrc));
+        _Shader = Hazel::Shader::Create("VertexPosColor", vertexSrc, fragmentSrc);
 
         /// SQUARE SHADER
 
@@ -129,15 +129,15 @@ public:
             }
         )";
 
-        _FlatColorShader.reset(Hazel::Shader::Create(flagColorShadervertexSrc, flatColorShaderfragmentSrc));
+        _FlatColorShader = Hazel::Shader::Create("FlatColor", flagColorShadervertexSrc, flatColorShaderfragmentSrc);
 
-        _TextureShader.reset(Hazel::Shader::Create("assets/shaders/Texture.glsl"));
+        auto textureShader = _ShaderLibrary.Load("assets/shaders/Texture.glsl");
 
         _Texture = Hazel::Texture2D::Create("assets/textures/Checkerboard.png");
         _ChernoLogoTexture = Hazel::Texture2D::Create("assets/textures/ChernoLogo.png");
 
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(_TextureShader)->Bind();
-        std::dynamic_pointer_cast<Hazel::OpenGLShader>(_TextureShader)->UploadUniformInt("u_Texture", 0);
+        std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->Bind();
+        std::dynamic_pointer_cast<Hazel::OpenGLShader>(textureShader)->UploadUniformInt("u_Texture", 0);
     }
 
     void OnAttach() override 
@@ -205,11 +205,13 @@ public:
             }
         }
 
+        auto textureShader = _ShaderLibrary.Get("Texture");
+
         _Texture->Bind();
-        Hazel::Renderer::Submit(_TextureShader, _SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        Hazel::Renderer::Submit(textureShader, _SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
         _ChernoLogoTexture->Bind();
-        Hazel::Renderer::Submit(_TextureShader, _SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
+        Hazel::Renderer::Submit(textureShader, _SquareVA, glm::scale(glm::mat4(1.0f), glm::vec3(1.5f)));
 
         // Triangle
         //Hazel::Renderer::Submit(_Shader, _VertexArray);
@@ -256,11 +258,11 @@ public:
     //}
 
 private:
-    
+    Hazel::ShaderLibrary _ShaderLibrary;
     Hazel::Ref<Hazel::Shader> _Shader;
     Hazel::Ref<Hazel::VertexArray> _VertexArray;
 
-    Hazel::Ref<Hazel::Shader> _FlatColorShader, _TextureShader;
+    Hazel::Ref<Hazel::Shader> _FlatColorShader;
     Hazel::Ref<Hazel::VertexArray> _SquareVA;
 
     Hazel::Ref<Hazel::Texture2D> _Texture, _ChernoLogoTexture;
