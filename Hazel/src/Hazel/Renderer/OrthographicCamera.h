@@ -10,6 +10,8 @@ namespace Hazel
     public:
         OrthographicCamera(float left, float right, float bottom, float top);
 
+        void SetProjection(float left, float right, float bottom, float top);
+
         const glm::vec3& GetPosition() const { return _Position; }
         void SetPosition(const glm::vec3& position) { _Position = position; RecalculateViewMatrix(); };
 
@@ -31,5 +33,4 @@ namespace Hazel
         glm::vec3 _Position = { 0.0f, 0.0f, 0.0f };
         float _Rotation = 0.0f; // stores only z rotation, because we don't need any other for orth camera
     };
-
 }

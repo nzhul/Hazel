@@ -11,8 +11,7 @@ class ExampleLayer : public Hazel::Layer
 {
 public:
     ExampleLayer()
-        : Layer("Example"), _Camera(-1.6f, 1.6f, -0.9f, 0.9f),
-        _CameraPosition(0.0f), _SquarePosition(0.0f)
+        : Layer("Example"), _CameraController(1280.0f / 720.0f, true)
     {
         _VertexArray.reset(Hazel::VertexArray::Create());
 
@@ -156,39 +155,14 @@ public:
         //    HZ_TRACE("Tab key is pressed!");
         //}
 
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_LEFT))
-            _CameraPosition.x -= _CameraMoveSpeed * deltaTime;
-        else if (Hazel::Input::IsKeyPressed(HZ_KEY_RIGHT))
-            _CameraPosition.x += _CameraMoveSpeed * deltaTime;
+        // Update
+        _CameraController.OnUpdate(deltaTime);
 
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_UP))
-            _CameraPosition.y += _CameraMoveSpeed * deltaTime;
-        else if (Hazel::Input::IsKeyPressed(HZ_KEY_DOWN))
-            _CameraPosition.y -= _CameraMoveSpeed * deltaTime;
-
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_A))
-            _CameraRotation += _CameraRotationSpeed * deltaTime;
-
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_D))
-            _CameraRotation -= _CameraRotationSpeed * deltaTime;
-
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_J))
-            _SquarePosition.x -= _SquareMoveSpeed * deltaTime;
-        else if (Hazel::Input::IsKeyPressed(HZ_KEY_L))
-            _SquarePosition.x += _SquareMoveSpeed * deltaTime;
-
-        if (Hazel::Input::IsKeyPressed(HZ_KEY_I))
-            _SquarePosition.y += _SquareMoveSpeed * deltaTime;
-        else if (Hazel::Input::IsKeyPressed(HZ_KEY_K))
-            _SquarePosition.y -= _SquareMoveSpeed * deltaTime;
-
+        // Render
         Hazel::RenderCommand::SetClearColor({ 0.1f, 0.1f, 0.1f, 1 });
         Hazel::RenderCommand::Clear();
 
-        _Camera.SetPosition(_CameraPosition);
-        _Camera.SetRotation(_CameraRotation);
-
-        Hazel::Renderer::BeginScene(_Camera);
+        Hazel::Renderer::BeginScene(_CameraController.GetCamera());
 
         static glm::mat4 scale = glm::scale(glm::mat4(1.0f), glm::vec3(0.1f));
 
@@ -226,8 +200,10 @@ public:
         ImGui::End();
     }
 
-    void OnEvent(Hazel::Event& event) override
+    void OnEvent(Hazel::Event& e) override
     {
+        _CameraController.OnEvent(e);
+
         //// HZ_TRACE("{0}", event);
 
         //if (event.GetEventType() == Hazel::EventType::KeyPressed)
@@ -267,16 +243,8 @@ private:
 
     Hazel::Ref<Hazel::Texture2D> _Texture, _ChernoLogoTexture;
 
-    Hazel::OrthographicCamera _Camera;
-    glm::vec3 _CameraPosition;
-    float _CameraMoveSpeed = 5.0f;
-    float _CameraRotation = 0.0f;
-    float _CameraRotationSpeed = 180.0f;
-
+    Hazel::OrthographicCameraController _CameraController;
     glm::vec3 _SquareColor = { 0.2f, 0.3f, 0.8f };
-
-    glm::vec3 _SquarePosition;
-    float _SquareMoveSpeed = 1.0f;
 };
 
 class Sandbox : public Hazel::Application {
