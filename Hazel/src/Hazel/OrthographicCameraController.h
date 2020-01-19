@@ -17,6 +17,9 @@ namespace Hazel
 
         OrthographicCamera& GetCamera() { return _Camera; }
         const OrthographicCamera& GetCamera() const { return _Camera; }
+
+        float GetZoomLevel() const { return _ZoomLevel; };
+        void SetZoomLevel(float level) { _ZoomLevel = level; };
     private:
         bool OnMouseScrolled(MouseScrolledEvent& e);
         bool OnWindowResized(WindowResizeEvent& e);
