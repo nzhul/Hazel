@@ -58,7 +58,7 @@ namespace Hazel
 
     bool OrthographicCameraController::OnWindowResized(WindowResizeEvent& e)
     {
-        _AspectRatio -= (float)e.GetWidth() / (float)e.GetHeight();
+        _AspectRatio = (float)e.GetWidth() / (float)e.GetHeight();
         _Camera.SetProjection(-_AspectRatio * _ZoomLevel, _AspectRatio * _ZoomLevel, -_ZoomLevel, _ZoomLevel);
         return false;
     }
