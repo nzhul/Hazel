@@ -5,5 +5,5 @@
 
 namespace Hazel
 {
-    RendererAPI* RenderCommand::_RendererAPI = new OpenGLRendererAPI;
+    Scope<RendererAPI> RenderCommand::_RendererAPI = CreateScope<OpenGLRendererAPI>();
 }

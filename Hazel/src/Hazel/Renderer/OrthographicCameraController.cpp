@@ -16,14 +16,26 @@ namespace Hazel
     void OrthographicCameraController::OnUpdate(Timestep deltaTime)
     {
         if (Input::IsKeyPressed(HZ_KEY_A))
-            _CameraPosition.x -= _CameraTranslationSpeed * deltaTime;
+        {
+            _CameraPosition.x -= cos(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+            _CameraPosition.y -= sin(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+        }
         else if (Input::IsKeyPressed(HZ_KEY_D))
-            _CameraPosition.x += _CameraTranslationSpeed * deltaTime;
+        {
+            _CameraPosition.x += cos(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+            _CameraPosition.y += sin(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+        }
 
         if (Input::IsKeyPressed(HZ_KEY_W))
-            _CameraPosition.y += _CameraTranslationSpeed * deltaTime;
+        {
+            _CameraPosition.x += -sin(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+            _CameraPosition.y += cos(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+        }
         else if (Input::IsKeyPressed(HZ_KEY_S))
-            _CameraPosition.y -= _CameraTranslationSpeed * deltaTime;
+        {
+            _CameraPosition.x -= -sin(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+            _CameraPosition.y -= cos(glm::radians(_CameraRotation)) * _CameraTranslationSpeed * deltaTime;
+        }
 
         if (_Rotation)
         {
@@ -32,6 +44,11 @@ namespace Hazel
 
             if (Input::IsKeyPressed(HZ_KEY_E))
                 _CameraRotation -= _CameraRotationSpeed * deltaTime;
+
+            if (_CameraRotation > 180.0f)
+                _CameraRotation -= 360.0f;
+            else if (_CameraRotation <= -180.0f)
+                _CameraRotation += 360.0f;
 
             _Camera.SetRotation(_CameraRotation);
         }
