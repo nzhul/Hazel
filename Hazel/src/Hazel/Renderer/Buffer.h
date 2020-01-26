@@ -32,11 +32,11 @@ namespace Hazel {
     {
         std::string Name;
         ShaderDataType Type;
-        uint32_t Offset;
+        size_t Offset;
         uint32_t Size;
         bool Normalized;
 
-        BufferElement() {}
+        BufferElement() = default;
 
         BufferElement(ShaderDataType type, const std::string& name, bool normalized = false)
             : Name(name), Type(type), Size(ShaderDataTypeSize(type)), Offset(0), Normalized(false)
@@ -72,7 +72,7 @@ namespace Hazel {
         BufferLayout(const std::initializer_list<BufferElement>& elements) 
             : _Elements(elements) 
         {
-            CalculateOffsetAndStride();
+            CalculateOffsetsAndStride();
         }
 
         inline uint32_t GetStride() const { return _Stride; }
@@ -83,9 +83,9 @@ namespace Hazel {
         std::vector<BufferElement>::const_iterator begin() const { return _Elements.begin(); }
         std::vector<BufferElement>::const_iterator end() const { return _Elements.end(); }
     private:
-        void CalculateOffsetAndStride()
+        void CalculateOffsetsAndStride()
         {
-            uint32_t offset = 0;
+            size_t offset = 0;
             _Stride = 0;
             for (auto& element : _Elements)
             {
