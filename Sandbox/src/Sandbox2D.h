@@ -19,5 +19,6 @@ private:
         // Temp
         Hazel::Ref<Hazel::VertexArray> _SquareVA;
         Hazel::Ref<Hazel::Shader> _FlatColorShader;
+        Hazel::Ref<Hazel::Texture2D> _CheckerboardTexture;
         glm::vec4 _SquareColor = { 0.2f, 0.3f, 0.8f, 1.0f };
 };
