@@ -14,6 +14,8 @@ namespace Hazel {
 
     Application::Application()
     {
+        HZ_PROFILE_FUNCTION();
+
         HZ_CORE_ASSERT(!_Instance, "Application already exists!");
         _Instance = this;
 
@@ -28,22 +30,32 @@ namespace Hazel {
 
     Application::~Application()
     {
+        HZ_PROFILE_FUNCTION();
+
         Renderer::Shutdown();
     }
 
 
     void Application::PushLayer(Layer* layer)
     {
+        HZ_PROFILE_FUNCTION();
+
         _LayerStack.PushLayer(layer);
+        layer->OnAttach();
     }
 
     void Application::PushOverlay(Layer* layer)
     {
+        HZ_PROFILE_FUNCTION();
+
         _LayerStack.PushOverlay(layer);
+        layer->OnAttach();
     }
 
     void Application::OnEvent(Event& e) 
     {
+        HZ_PROFILE_FUNCTION();
+
         EventDispatcher dispatcher(e);
         dispatcher.Dispatch<WindowCloseEvent>(HZ_BIND_EVENT_FN(Application::OnWindowClosed));
         dispatcher.Dispatch<WindowResizeEvent>(HZ_BIND_EVENT_FN(Application::OnWindowResize));
@@ -58,21 +70,33 @@ namespace Hazel {
 
     void Application::Run()
     {
+        HZ_PROFILE_FUNCTION();
+
         while (_Running)
         {
+            HZ_PROFILE_SCOPE("RunLoop");
+
             float time = (float)glfwGetTime(); // Platform::GetTime
             Timestep timestep = time - _LastFrameTime;
             _LastFrameTime = time;
 
             if (!_Minimized)
             {
-                for (Layer* layer : _LayerStack)
-                    layer->OnUpdate(timestep);
+                {
+                    HZ_PROFILE_SCOPE("LayerStack OnUpdate");
+
+                    for (Layer* layer : _LayerStack)
+                        layer->OnUpdate(timestep);
+                }
             }
 
             _ImGuiLayer->Begin();
-            for (Layer* layer : _LayerStack)
-                layer->OnImGuiRender();
+            {
+                HZ_PROFILE_SCOPE("LayerStack OnImGuiRenderer");
+
+                for (Layer* layer : _LayerStack)
+                    layer->OnImGuiRender();
+            }
             _ImGuiLayer->End();
 
             _Window->OnUpdate();
@@ -87,6 +111,8 @@ namespace Hazel {
 
     bool Application::OnWindowResize(WindowResizeEvent& e)
     {
+        HZ_PROFILE_FUNCTION();
+
         if (e.GetWidth() == 0 || e.GetHeight() == 0)
         {
             _Minimized = true;
